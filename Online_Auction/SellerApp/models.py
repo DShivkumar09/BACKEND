@@ -11,6 +11,7 @@ class Product(models.Model):
     product_base_price = models.DecimalField(max_digits=10, decimal_places=2)
     owner = models.ForeignKey(User,on_delete=models.CASCADE, related_name='products')
     product_verify = models.BooleanField(default=False)
+   
 
 class ProductImages(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_images')
