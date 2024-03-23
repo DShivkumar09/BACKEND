@@ -18,7 +18,8 @@ class AuctionDetails(models.Model):
 class CurrentAuctions(models.Model):
     current_auction_id = models.BigAutoField(primary_key=True)
     auction = models.OneToOneField(AuctionDetails, on_delete=models.CASCADE, related_name='current_auction')
-
+        
+        
 class Bidders(models.Model):
     CHOICES = [('automatic', 'automatic'),('manual', 'manual')]
     bidder_type = models.CharField(max_length=10, choices=CHOICES)
