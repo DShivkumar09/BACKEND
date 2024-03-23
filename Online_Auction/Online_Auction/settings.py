@@ -39,13 +39,20 @@ INSTALLED_APPS = [
     'ReportsApp',
     'SellerApp',
     'UserApp',
+    'corsheaders',
 ]
 
 AUTH_USER_MODEL = 'UserApp.User'
 
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'https://127.0.0.1:3000',
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -136,3 +143,40 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
 EMAIL_PORT= os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple':{
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+            }
+    },
+   'handlers': {
+       'console': {
+           'level': 'INFO',
+           'class': 'logging.StreamHandler',
+           'formatter': 'simple',
+       },
+       'error_handler':{
+           'level':'ERROR',
+           'class': 'logging.FileHandler',
+           'filename': 'error.log',
+           'formatter': 'simple',
+       },
+       'success_handler':{
+           'level':'INFO',
+           'class': 'logging.FileHandler',
+           'filename': 'success.log',
+           'formatter': 'simple',
+       }
+   },
+   'loggers': {
+       'mylogger': {
+           'handlers':['console', 'error_handler', 'success_handler'],
+           'level': 'INFO'
+       }
+   }
+}

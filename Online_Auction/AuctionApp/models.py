@@ -1,6 +1,7 @@
 from django.db import models
 from UserApp.models import User
 from SellerApp.models import Product
+from django.utils import timezone
 
 # Create your models here.
 
@@ -8,12 +9,19 @@ class AuctionDetails(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='auction')
     auction_id = models.BigAutoField(primary_key=True)
     auction_date = models.DateField(blank=True)
-    auctio_start_time = models.TimeField(blank=True)
-    auctio_end_time = models.TimeField(blank=True)
+    auctio_start_time = models.TimeField(blank=True, auto_now_add=True)
+    auctio_end_time = models.TimeField(blank=True, auto_now_add=True)
     increment_amount = models.FloatField(blank=True)
 
     def __str__(self) -> str:
         return f'{self.auction_id}'
+    
+    @classmethod
+    def get_auctions_for_this_week(cls):
+        today = timezone.now().date()
+        end_of_week = today + timezone.timedelta(days=7)
+        return cls.objects.filter(auction_date__range=[today, end_of_week])
+
     
 class CurrentAuctions(models.Model):
     current_auction_id = models.BigAutoField(primary_key=True)
