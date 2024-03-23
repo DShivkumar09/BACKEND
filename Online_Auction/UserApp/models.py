@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
+from django.core import  validators
+# from django.contrib.auth.password_validation import validate_password
 
 # Create your models here.
 
@@ -25,10 +27,10 @@ class City(models.Model):
 class User(AbstractUser):
     CHOICES = [('user', 'user'), ('admin', 'admin')]
     role = models.CharField(max_length=5, choices=CHOICES, default='admin')
-    aadhar_card = models.ImageField(blank=True, upload_to='aadhar/') 
-    pan_card = models.ImageField(blank=True, upload_to='pan_card/')
-    passport_front = models.ImageField(blank=True, upload_to='passport_front/')
-    passport_back = models.ImageField(blank=True, upload_to='passport_back/')
+    aadhar_card = models.ImageField(blank=True, upload_to='aadhar/',validators=[validators.FileExtensionValidator(allowed_extensions=[ 'jpeg', 'png'])]) 
+    pan_card = models.ImageField(blank=True, upload_to='pan/',validators=[validators.FileExtensionValidator(allowed_extensions=[ 'jpeg', 'png'])])
+    passport_front = models.ImageField(blank=True, upload_to='passport_front/',validators=[validators.FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])
+    passport_back = models.ImageField(blank=True, upload_to='passport_back/',validators=[validators.FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])
     contact_no = PhoneNumberField(blank=True, region='IN')
     address = models.TextField(blank=True)
     city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True, related_name='users')
@@ -37,7 +39,7 @@ class User(AbstractUser):
 
 class BankInformation(models.Model):
     bank_name = models.CharField(max_length=100)
-    bank_ifsc_code = models.CharField(max_length=20)
+    bank_ifsc_code = models.CharField(max_length=20,validators=[validators.RegexValidator('^[A-Z]{4}0[A-Z0-9]{6}$')])
     bank_address = models.TextField()
     bank_account_number = models.CharField(max_length=20, unique=True)
     branch_name = models.CharField(max_length=30)

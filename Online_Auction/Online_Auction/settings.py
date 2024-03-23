@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'phonenumber_field',
     'rest_framework_simplejwt',
     'AuctionApp',
@@ -39,13 +40,22 @@ INSTALLED_APPS = [
     'ReportsApp',
     'SellerApp',
     'UserApp',
+    'django_celery_beat',
+    'django_celery_results',
+    
 ]
 
 AUTH_USER_MODEL = 'UserApp.User'
 
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000', 
+    'http://127.0.0.1:3000'
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -136,3 +146,47 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
 EMAIL_PORT= os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+print(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple':{
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+            }
+    },
+   'handlers': {
+       'console': {
+           'level': 'INFO',
+           'class': 'logging.StreamHandler',
+           'formatter': 'simple',
+       },
+       'error_handler':{
+           'level':'ERROR',
+           'class': 'logging.FileHandler',
+           'filename': 'error.log',
+           'formatter': 'simple',
+       },
+       'success_handler':{
+           'level':'INFO',
+           'class': 'logging.FileHandler',
+           'filename': 'success.log',
+           'formatter': 'simple',
+       }
+   },
+   'loggers': {
+       'mylogger': {
+           'handlers':['console', 'error_handler', 'success_handler'],
+           'level': 'INFO'
+       }
+   }
+}
+MEDIA_ROOT = 'media'
+MEDIA_URL = 'media/'
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_RESULT_EXTENDED = True
